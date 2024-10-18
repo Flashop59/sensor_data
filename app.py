@@ -3,13 +3,13 @@ import mysql.connector
 import pandas as pd
 
 # Connect to MySQL database
-db = mysql.connector.connect(
-    host="mylogger.helioho.st",
-    user="omhure_datalogger",
-    password="Redmi@6a",
-    database="omhure_datalogger"
-)
-
+try:
+    db = mysql.connector.connect(
+        host="mylogger.helioho.st",
+        user="omhure_datalogger",
+        password="Redmi@6a",  # Replace with your actual password
+        database="omhure_datalogger"
+    )
 
     cursor = db.cursor()
 
