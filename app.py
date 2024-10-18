@@ -20,7 +20,7 @@ try:
     # Get column names
     columns = [i[0] for i in cursor.description]
 
-    # Convert to pandas DataFrame
+    # Convert to pandas DataFrame 
     df = pd.DataFrame(data, columns=columns)
 
     # Display the data in Streamlit
