@@ -4,7 +4,7 @@ import pandas as pd
 
 # Connect to MySQL database
 db = mysql.connector.connect(
-    host="localhost",
+    host="mylogger.helioho.st",
     user="omhure_datalogger",
     password="Redmi@6a",
     database="omhure_datalogger"
