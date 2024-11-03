@@ -1,13 +1,7 @@
 import streamlit as st
 import mysql.connector
 import pandas as pd
-
-# Set page refresh interval to 5 seconds
-st.set_page_config(page_title="Sensor Data", layout="wide")
-st.experimental_set_query_params(refresh="5")
-
-# Auto-refresh feature (refresh every 5 seconds)
-st_autorefresh(interval=5000, limit=None, key="data_refresh")
+import time
 
 # Function to fetch data from the database
 def fetch_data():
@@ -47,3 +41,7 @@ if not df.empty:
         file_name='sensor_data.csv',
         mime='text/csv'
     )
+
+# Wait for 5 seconds and rerun the script
+time.sleep(5)
+st.experimental_rerun()
