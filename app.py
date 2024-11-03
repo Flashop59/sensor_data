@@ -1,13 +1,15 @@
 import streamlit as st
 import mysql.connector
 import pandas as pd
-import time
 
-# Refresh every 5 seconds
-st.experimental_set_query_params(placeholder="refresh")
-st.set_page_config(page_title="Sensor Data", layout="wide", initial_sidebar_state="collapsed")
+# Set page refresh interval to 5 seconds
+st.set_page_config(page_title="Sensor Data", layout="wide")
+st.experimental_set_query_params(refresh="5")
 
-# Define a function to fetch data from the database
+# Auto-refresh feature (refresh every 5 seconds)
+st_autorefresh(interval=5000, limit=None, key="data_refresh")
+
+# Function to fetch data from the database
 def fetch_data():
     try:
         db = mysql.connector.connect(
@@ -18,7 +20,7 @@ def fetch_data():
         )
 
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM sensor_data ORDER BY id DESC")  # Adjust to sort by newest entry
+        cursor.execute("SELECT * FROM sensor_data ORDER BY id DESC")  # Latest entries first
         data = cursor.fetchall()
         columns = [i[0] for i in cursor.description]
         cursor.close()
@@ -32,20 +34,16 @@ def fetch_data():
 # Main section of the Streamlit app
 st.title("Sensor Data")
 
-while True:
-    df = fetch_data()
-    if not df.empty:
-        st.dataframe(df)  # Display the data with latest entries on top
+# Fetch and display data
+df = fetch_data()
+if not df.empty:
+    st.dataframe(df)  # Display the data with the latest entries on top
 
-        # CSV download button
-        csv = df.to_csv(index=False)
-        st.download_button(
-            label="Download data as CSV",
-            data=csv,
-            file_name='sensor_data.csv',
-            mime='text/csv'
-        )
-    
-    # Refresh every 5 seconds
-    time.sleep(5)
-    st.experimental_rerun()
+    # CSV download button
+    csv = df.to_csv(index=False)
+    st.download_button(
+        label="Download data as CSV",
+        data=csv,
+        file_name='sensor_data.csv',
+        mime='text/csv'
+    )
