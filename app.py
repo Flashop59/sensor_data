@@ -1,7 +1,13 @@
 import streamlit as st
 import mysql.connector
 import pandas as pd
-import time
+
+# Set the page to refresh every 5 seconds
+st.set_page_config(page_title="Sensor Data", layout="wide")
+
+# Add autorefresh (useful in local environments; this will simulate an interval-based refresh)
+st_autorefresh = st.empty()
+st_autorefresh.empty()
 
 # Function to fetch data from the database
 def fetch_data():
@@ -28,14 +34,13 @@ def fetch_data():
 # Main section of the Streamlit app
 st.title("Sensor Data")
 
-# Display data and download button outside the loop
-df = fetch_data()
-
-# Placeholder for data that will be periodically updated
+# Fetch and display data in a placeholder for refreshing
 data_placeholder = st.empty()
-
-# CSV download button (static, placed outside the refresh loop)
+df = fetch_data()
 if not df.empty:
+    data_placeholder.dataframe(df)  # Display the data with the latest entries on top
+
+    # CSV download button
     csv = df.to_csv(index=False)
     st.download_button(
         label="Download data as CSV",
@@ -43,13 +48,3 @@ if not df.empty:
         file_name='sensor_data.csv',
         mime='text/csv'
     )
-
-# Update the data display every 5 seconds
-while True:
-    df = fetch_data()
-    if not df.empty:
-        data_placeholder.dataframe(df)  # Only update the dataframe display
-
-    # Wait for 5 seconds before refreshing
-    time.sleep(5)
-    st.experimental_rerun()
