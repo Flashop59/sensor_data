@@ -28,23 +28,28 @@ def fetch_data():
 # Main section of the Streamlit app
 st.title("Sensor Data")
 
-# Create a placeholder for dynamic content
-placeholder = st.empty()
+# Display data and download button outside the loop
+df = fetch_data()
 
-# Run the app with a refresh interval
+# Placeholder for data that will be periodically updated
+data_placeholder = st.empty()
+
+# CSV download button (static, placed outside the refresh loop)
+if not df.empty:
+    csv = df.to_csv(index=False)
+    st.download_button(
+        label="Download data as CSV",
+        data=csv,
+        file_name='sensor_data.csv',
+        mime='text/csv'
+    )
+
+# Update the data display every 5 seconds
 while True:
-    with placeholder.container():
-        df = fetch_data()
-        if not df.empty:
-            st.dataframe(df)  # Display the data with the latest entries on top
+    df = fetch_data()
+    if not df.empty:
+        data_placeholder.dataframe(df)  # Only update the dataframe display
 
-            # CSV download button
-            csv = df.to_csv(index=False)
-            st.download_button(
-                label="Download data as CSV",
-                data=csv,
-                file_name='sensor_data.csv',
-                mime='text/csv'
-            )
-        # Wait for 5 seconds before refreshing
-        time.sleep(5)
+    # Wait for 5 seconds before refreshing
+    time.sleep(5)
+    st.experimental_rerun()
